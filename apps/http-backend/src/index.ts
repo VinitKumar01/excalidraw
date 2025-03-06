@@ -2,6 +2,8 @@ import express from "express";
 import { UserRouter } from "./routes/route.js";
 import { PORT } from "@repo/backend-common/config";
 
+console.log(PORT)
+
 const port = PORT;
 
 const app = express();

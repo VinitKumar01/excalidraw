@@ -2,8 +2,8 @@
   "name": "http-backend",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
-  "type": "module",
+  "main": "src/index.ts",
+  "type": "commonjs",
   "scripts": {
     "build": "npx tsc -b",
     "start": "node ./dist/index.js",
@@ -21,6 +21,7 @@
     "@repo/common": "workspace:*",
     "@repo/typescript-config": "workspace:*",
     "@types/bcrypt": "^5.0.2",
-    "@types/express": "^5.0.0"
+    "@types/express": "^5.0.0",
+    "@repo/db": "workspace:*"
   }
 }

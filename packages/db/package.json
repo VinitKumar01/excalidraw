@@ -1,12 +1,12 @@
 {
-  "name": "@repo/backend-common",
+  "name": "@repo/db",
   "version": "1.0.0",
   "description": "",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "type": "commonjs",
   "exports": {
-    "./config": {
+    "./client": {
       "import": "./dist/index.js",
       "require": "./dist/index.js",
       "types": "./dist/index.d.ts"
@@ -24,6 +24,7 @@
     "@types/node": "^22.13.9"
   },
   "dependencies": {
-    "dotenv": "^16.4.7"
+    "@prisma/client": "6.4.1",
+    "prisma": "^6.4.1"
   }
 }

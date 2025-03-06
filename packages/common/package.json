@@ -2,15 +2,19 @@
   "name": "@repo/common",
   "version": "1.0.0",
   "description": "",
-  "main": "dist/index.js",
+  "main": "dist/types.js",
+  "types": "dist/types.d.ts",
   "type": "commonjs",
   "exports": {
-    "./types": "./dist/types.js"
+    "./types": {
+      "import": "./dist/types.js",
+      "require": "./dist/types.js",
+      "types": "./dist/types.d.ts"
+    }
   },
   "scripts": {
     "build": "npx tsc",
-    "clean": "rm -rf dist",
-    "dev": "npx tsc --watch"
+    "clean": "rm -rf dist"
   },
   "keywords": [],
   "author": "",

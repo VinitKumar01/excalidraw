@@ -1,6 +1,6 @@
-const z = require("zod");
+import * as z from "zod";
 
-const userSchema = z.object({
+export const userSchema = z.object({
     email: z
         .string({ required_error: "Email must be provided" })
         .email({ message: "Invalid Email Format" }),
@@ -19,7 +19,3 @@ const userSchema = z.object({
                 "Password must include 8+ chars, at least 1 letter, 1 special char or number",
         }),
 });
-
-export = {
-    userSchema
-}

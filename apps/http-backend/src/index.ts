@@ -2,7 +2,7 @@ import express from "express";
 import { UserRouter } from "./routes/route.js";
 import { PORT } from "@repo/backend-common/config";
 
-console.log(PORT)
+console.log(PORT);
 
 const port = PORT;
 
@@ -11,6 +11,6 @@ app.use(express.json());
 
 app.use("/api/v1/user", UserRouter);
 
-app.listen(port, ()=> {
-    console.log(`Listening to port ${port}`);
-})
+app.listen(port, () => {
+  console.log(`Listening to port ${port}`);
+});

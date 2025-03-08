@@ -94,6 +94,9 @@ importers:
 
   apps/ws-backend:
     dependencies:
+      jsonwebtoken:
+        specifier: ^9.0.2
+        version: 9.0.2
       ws:
         specifier: ^8.18.1
         version: 8.18.1
@@ -107,6 +110,9 @@ importers:
       '@repo/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config
+      '@types/jsonwebtoken':
+        specifier: ^9.0.9
+        version: 9.0.9
       '@types/ws':
         specifier: ^8.18.0
         version: 8.18.0

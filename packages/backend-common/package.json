@@ -2,19 +2,12 @@
   "name": "@repo/backend-common",
   "version": "1.0.0",
   "description": "",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "type": "commonjs",
+  "main": "index.js",
   "exports": {
-    "./config": {
-      "import": "./dist/index.js",
-      "require": "./dist/index.js",
-      "types": "./dist/index.d.ts"
-    }
+    "./config": "./src/index.ts"
   },
   "scripts": {
-    "build": "npx tsc",
-    "clean": "rm -rf dist"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",

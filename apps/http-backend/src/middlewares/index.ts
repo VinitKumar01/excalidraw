@@ -1,4 +1,4 @@
-import { JWT_SECRET } from "@repo/backend-common/index";
+import { JWT_SECRET } from "@repo/backend-common/config";
 import { NextFunction, Request, Response } from "express";
 import jwt, { Secret } from "jsonwebtoken";
 

@@ -1,7 +1,11 @@
-import dotenv  from "dotenv";
-import path from "path";
+const dotenv = require("dotenv");
+const path = require("path");
 
-dotenv.config({ path: path.resolve(__dirname, "../.env") });
+dotenv.config({
+  path: path.resolve(__dirname, "../.env"),
+});
 
-export const PORT = process.env.PORT;
-export const JWT_SECRET = process.env.JWT_SECRET;
+module.exports = {
+  PORT: process.env.PORT,
+  JWT_SECRET: process.env.JWT_SECRET,
+};

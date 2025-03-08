@@ -2,7 +2,7 @@
   "name": "ws-backend",
   "version": "1.0.0",
   "description": "",
-  "main": "arc/index.js",
+  "main": "index.js",
   "types": "commonjs",
   "scripts": {
     "build": "npx tsc -b",

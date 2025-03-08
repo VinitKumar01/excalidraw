@@ -3,7 +3,7 @@ import { userSchema } from "@repo/common/types";
 import * as bcrypt from "bcrypt";
 import { prismaClient } from "@repo/db/client";
 import jwt, { Secret } from "jsonwebtoken";
-import { JWT_SECRET } from "@repo/backend-common/index";
+import { JWT_SECRET } from "@repo/backend-common/config";
 import { authenticateUser } from "../middlewares";
 
 export const UserRouter: express.Router = Router();

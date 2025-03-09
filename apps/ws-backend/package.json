@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "types": "commonjs",
+  "type": "commonjs",
   "scripts": {
     "build": "npx tsc -b",
     "start": "node ./dist/index.js",
@@ -16,7 +16,6 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "module",
   "devDependencies": {
     "@repo/backend-common": "workspace:*",
     "@repo/db": "workspace:*",

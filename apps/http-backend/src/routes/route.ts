@@ -156,17 +156,50 @@ UserRouter.post(
 UserRouter.get("/chats/:roomId", async (req: Request, res: Response) => {
   const roomId = Number(req.params.roomId);
 
-  const messages = await prismaClient.chat.findMany({
-    where: {
-      roomId,
-    },
-    orderBy: {
-      id: "desc",
-    },
-    take: 50,
-  });
+  try {
+    const messages = await prismaClient.chat.findMany({
+      where: {
+        roomId,
+      },
+      orderBy: {
+        id: "desc",
+      },
+      take: 50,
+    });
 
-  res.json({
-    messages,
-  });
+    res.json({
+      messages,
+    });
+  } catch (_) {
+    res.status(500).json({
+      message: "Error occured while fetching chats",
+    });
+  }
+});
+
+UserRouter.get("/room/:slug", async (req: Request, res: Response) => {
+  const slug = req.params.slug;
+
+  try {
+    const room = await prismaClient.room.findFirst({
+      where: {
+        slug,
+      },
+    });
+
+    if (!room) {
+      res.status(404).json({
+        message: "Room not found",
+      });
+      return;
+    }
+
+    res.json({
+      roomId: room?.id,
+    });
+  } catch (_) {
+    res.status(500).json({
+      message: "Error occured while fetching roomId",
+    });
+  }
 });

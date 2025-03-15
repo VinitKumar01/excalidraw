@@ -1,6 +1,6 @@
 import express from "express";
 import { UserRouter } from "./routes/route.js";
-import { PORT } from "@repo/backend-common/config";
+import { PORT } from "@repo/common-variables/config";
 
 console.log(PORT);
 

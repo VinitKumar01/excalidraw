@@ -17,7 +17,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@repo/backend-common": "workspace:*",
+    "@repo/common-variables": "workspace:*",
     "@repo/db": "workspace:*",
     "@repo/typescript-config": "workspace:*",
     "@types/jsonwebtoken": "^9.0.9",

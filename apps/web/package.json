@@ -11,8 +11,8 @@
     "check-types": "tsc --noEmit"
   },
   "dependencies": {
-    "@repo/ui": "workspace:*",
     "@tailwindcss/postcss": "^4.0.14",
+    "axios": "^1.8.3",
     "next": "^15.2.1",
     "postcss": "^8.5.3",
     "react": "^19.0.0",
@@ -21,6 +21,7 @@
   },
   "devDependencies": {
     "@repo/common": "workspace:*",
+    "@repo/common-variables": "workspace:*",
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
     "@types/node": "^22.13.9",

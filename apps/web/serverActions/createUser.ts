@@ -35,7 +35,9 @@ export default async function createUser(data: IUser) {
       success: false,
       message:
         "⚠️ Request failed: " +
-        (axiosError.response && axiosError.response.data.message),
+        (axiosError.response
+          ? axiosError.response.data.message
+          : "Server Down"),
     };
   }
 }

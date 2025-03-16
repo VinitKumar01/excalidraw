@@ -7,6 +7,7 @@ import { userSchema } from "@repo/common/types"
 import createUser from "../serverActions/createUser"
 import { useRouter } from "next/navigation"
 import loginUser from "../serverActions/loginUser"
+import ToastMessage from "./ToastMessage"
 
 interface IAuthComponent {
     isSignin: boolean,
@@ -94,7 +95,7 @@ export default function AuthComponent({isSignin}: IAuthComponent) {
                 <Button value={isSignin? "SignIn" : "SignUp"}/>
                 </Form>
             </div>
-            {serverMessage && <div className={"fixed bottom-5 right-5 text-wrap px-4 py-2 rounded-lg shadow-lg bg-white transition-opacity duration-300 text-2xl " + (serverError? "text-red-500" : "text-green-500")}>{serverMessage}</div>}
+            {serverMessage && <ToastMessage success={!serverError} message={serverMessage}/>}
         </div>
     )
 }

@@ -1,29 +1,39 @@
-"use client"
-import { useParams } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
-import InitDraw from "../../../draw";
+"use client";
+import { useEffect, useRef } from "react";
+import InitDraw, { clearCanvas, existingShapes } from "../../../draw";
 
 export default function Canvas() {
-    const canvasRef = useRef<HTMLCanvasElement>(null);
-    const params = useParams();
-    const roomId = Array.isArray(params.roomid) ? params.roomid[0] : params.roomid;
-    const [dimensions, setDimensions] = useState({ width: 2000, height: 1000 });
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const initDrawCalledRef = useRef(false);
 
-    useEffect(()=>{
-        const canvas = canvasRef.current
-        if (typeof window == "undefined") {
-            return;
-        }
-        setDimensions({
-            width: window.innerWidth,
-            height: window.innerHeight
-        });
-        if (!canvas) return;
-        
-        InitDraw(canvas);
-    }, [canvasRef])
-    return (
-        
-        <canvas ref={canvasRef} key={roomId} height={dimensions.height} width={dimensions.width}></canvas>
-    )
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const context = canvas.getContext("2d");
+    if (!context) return;
+
+    const setCanvasSize = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      clearCanvas(existingShapes, canvas, context)
+    };
+
+    setCanvasSize();
+
+    if (!initDrawCalledRef.current) {
+      InitDraw(canvas);
+      initDrawCalledRef.current = true;
+    }
+
+    const handleResize = () => {
+      setCanvasSize();
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
+  return <canvas ref={canvasRef}/>;
 }

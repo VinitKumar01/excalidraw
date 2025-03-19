@@ -1,4 +1,4 @@
-"use client";
+"use server";
 
 import { BACKEND_URL } from "@repo/common-variables/config";
 import axios, { AxiosError } from "axios";

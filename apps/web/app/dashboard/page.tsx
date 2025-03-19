@@ -7,7 +7,7 @@ import ToastMessage from "../../components/ToastMessage";
 import { useState } from "react";
 import searchRoom from "../../serverActions/searchRoom";
 import { userSchema } from "@repo/common/types";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 interface IFormError {
   formErrors: string[];
@@ -26,6 +26,7 @@ export default function dashboard() {
   });
 
   async function handleJoin(formData: FormData) {
+    console.log("Handle Join");
     const slug = formData.get("slug");
 
     const { error, success, data } = RoomSearchSchema.safeParse({ slug });
@@ -56,6 +57,7 @@ export default function dashboard() {
   }
 
   async function handleCreate(formData: FormData) {
+    console.log("Handle Create");
     const slug = formData.get("slug");
     const token = localStorage.getItem("token");
 

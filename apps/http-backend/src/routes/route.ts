@@ -137,7 +137,11 @@ UserRouter.post(
       const room = await prismaClient.room.create({
         data: {
           slug,
-          admin: req.body.id,
+          admin: {
+            connect: {
+              id: req.body.id,
+            },
+          },
         },
       });
 
@@ -146,7 +150,7 @@ UserRouter.post(
       });
     } catch (_) {
       res.status(411).json({
-        message: "Room already exists with this name",
+        message: "Room with this name already exists",
       });
     }
   }

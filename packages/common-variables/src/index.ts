@@ -13,3 +13,5 @@ dotenv.config({
 export const PORT = process.env.PORT;
 export const JWT_SECRET = process.env.JWT_SECRET;
 export const BACKEND_URL = process.env.BACKEND_URL;
+export const WS_PORT = process.env.WS_PORT;
+export const WS_SERVER_URL = process.env.WS_SERVER_URL;

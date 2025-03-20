@@ -1,10 +1,12 @@
+import chat from "../serverActions/chat";
+
 type Shape =
   | { type: "Rect"; x: number; y: number; width: number; height: number }
   | { type: "Circle"; centreX: number; centreY: number; radius: number };
 
 export let existingShapes: Shape[] = [];
 
-export default function InitDraw(canvas: HTMLCanvasElement) {
+export default function InitDraw(canvas: HTMLCanvasElement, roomId: string) {
   if (canvas) {
     const context = canvas.getContext("2d");
 
@@ -24,7 +26,7 @@ export default function InitDraw(canvas: HTMLCanvasElement) {
       initialY = e.clientY;
     });
 
-    canvas.addEventListener("mouseup", (e) => {
+    canvas.addEventListener("mouseup", async (e) => {
       isClicked = false;
       finalX = e.clientX;
       finalY = e.clientY;
@@ -35,6 +37,16 @@ export default function InitDraw(canvas: HTMLCanvasElement) {
         width: finalX - initialX,
         height: finalY - initialY,
       });
+      await chat(
+        roomId,
+        JSON.stringify({
+          type: "Rect",
+          x: initialX,
+          y: initialY,
+          width: finalX - initialX,
+          height: finalY - initialY,
+        })
+      );
     });
 
     canvas.addEventListener("mousemove", (e) => {

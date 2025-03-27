@@ -169,10 +169,13 @@ UserRouter.get("/chats/:roomId", async (req: Request, res: Response) => {
         id: "desc",
       },
       take: 50,
+      select: {
+        message: true,
+      },
     });
 
     res.json({
-      messages,
+      messages: messages.map((msg) => JSON.parse(msg.message)),
     });
   } catch (_) {
     res.status(500).json({

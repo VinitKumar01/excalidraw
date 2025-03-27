@@ -8,7 +8,7 @@ const wss = new WebSocketServer({ port: Number(WS_PORT) });
 interface Users {
   userId: string;
   ws: WebSocket;
-  rooms: string[];
+  rooms: number[];
 }
 
 const users: Users[] = [];
@@ -59,7 +59,10 @@ wss.on("connection", function connection(ws, request) {
         const alreadyJoined = user?.rooms.includes(parsedData.roomId);
 
         if (!alreadyJoined) {
-          user?.rooms.push(parsedData.roomId);
+          user.rooms.push(Number(parsedData.roomId));
+          ws.send("Joined");
+        } else {
+          ws.send("Already joined");
         }
       }
     }
@@ -75,11 +78,13 @@ wss.on("connection", function connection(ws, request) {
     }
 
     if (parsedData.type === "chat") {
-      const roomId = parsedData.roomId;
+      console.log("chatting");
+      const roomId = Number(parsedData.roomId);
       const message = parsedData.message;
 
       const user = users.find((user) => user.ws === ws);
       const joined = user?.rooms.includes(roomId);
+      console.log(joined);
 
       if (joined) {
         //queue the backend call using redis or kafka to reduce latency
@@ -92,14 +97,9 @@ wss.on("connection", function connection(ws, request) {
         });
 
         users.forEach((user) => {
+          console.log(user.userId);
           if (user.rooms.includes(roomId) && user.ws !== ws) {
-            user.ws.send(
-              JSON.stringify({
-                type: "chat",
-                message,
-                roomId,
-              })
-            );
+            user.ws.send(message);
           }
         });
       }

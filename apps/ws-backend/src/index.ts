@@ -78,13 +78,11 @@ wss.on("connection", function connection(ws, request) {
     }
 
     if (parsedData.type === "chat") {
-      console.log("chatting");
       const roomId = Number(parsedData.roomId);
       const message = parsedData.message;
 
       const user = users.find((user) => user.ws === ws);
       const joined = user?.rooms.includes(roomId);
-      console.log(joined);
 
       if (joined) {
         //queue the backend call using redis or kafka to reduce latency
@@ -97,7 +95,6 @@ wss.on("connection", function connection(ws, request) {
         });
 
         users.forEach((user) => {
-          console.log(user.userId);
           if (user.rooms.includes(roomId) && user.ws !== ws) {
             user.ws.send(message);
           }

@@ -50,8 +50,6 @@ export default function Canvas() {
 
     wss.onmessage = (event) => {
       if (event.data === "Joined") return;
-      console.log("message received");
-      console.log(event.data);
 
       try {
         const newShape = JSON.parse(event.data);
@@ -61,9 +59,7 @@ export default function Canvas() {
           );
           return isDuplicate ? prevShapes : [...prevShapes, newShape];
         });
-      } catch (error) {
-        console.error("Error parsing message:", error);
-      }
+      } catch (error) {}
     };
   }, [wss]);
 
@@ -72,8 +68,6 @@ export default function Canvas() {
     const context = canvas?.getContext("2d");
 
     if (!wss || !canvas || !context) return;
-
-    console.log("WebSocket is ready, initializing draw");
 
     InitDraw(
       canvas,
@@ -90,7 +84,6 @@ export default function Canvas() {
 
     if (!hasJoined) {
       (async () => {
-        console.log("Calling JoinRoom");
         await joinRoom(roomId, token, setWss, setHasJoined);
       })();
     }
@@ -107,7 +100,6 @@ export default function Canvas() {
     const loadInitialShapes = async () => {
       try {
         const shapes = await getChats(roomId);
-        console.log("Initial shapes:", shapes);
         setExistingShapes(shapes);
       } catch (error) {
         console.error("Failed to load initial shapes:", error);
@@ -117,7 +109,6 @@ export default function Canvas() {
     loadInitialShapes();
 
     return () => {
-      console.log("Unmounting");
       if (wss) {
         leaveRoom(roomId, wss, setWss);
       }
@@ -227,7 +218,6 @@ async function joinRoom(
     ws.onopen = () => {
       setWss(ws);
       setHasJoined(true);
-      console.log("WebSocket connected");
 
       ws.send(
         JSON.stringify({
@@ -239,13 +229,11 @@ async function joinRoom(
     };
 
     ws.onerror = (error) => {
-      console.error("WebSocket Error:", error);
       setHasJoined(false);
       reject(error);
     };
 
     ws.onclose = () => {
-      console.warn("WebSocket closed");
       setWss(undefined);
       setHasJoined(false);
     };
@@ -254,12 +242,10 @@ async function joinRoom(
 
 async function chat(roomId: string, message: string, wss: WebSocket) {
   if (!wss) {
-    console.error("WebSocket (wss) is undefined");
     return;
   }
 
   if (wss.readyState !== WebSocket.OPEN) {
-    console.error("WebSocket is not open. Current state:", wss.readyState);
     return;
   }
 
@@ -287,6 +273,5 @@ async function leaveRoom(
     wss.close();
     setWss(undefined);
   } else {
-    console.warn("WebSocket is not connected or already closed.");
   }
 }

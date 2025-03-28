@@ -8,6 +8,8 @@ type Shape =
   | { type: "Rect"; x: number; y: number; width: number; height: number }
   | { type: "Circle"; centreX: number; centreY: number; radius: number };
 
+type ShapeType = "Rect" | "Circle";
+
 export default function Canvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const params = useParams();
@@ -15,6 +17,7 @@ export default function Canvas() {
   const [existingShapes, setExistingShapes] = useState<Shape[]>([]);
   const [wss, setWss] = useState<WebSocket>();
   const [hasJoined, setHasJoined] = useState(false);
+  const [shapeType, setShapeType] = useState<ShapeType>("Rect");
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -69,15 +72,18 @@ export default function Canvas() {
 
     if (!wss || !canvas || !context) return;
 
-    InitDraw(
+    const cleanup = InitDraw(
       canvas,
       roomId,
       context,
       () => existingShapes,
       setExistingShapes,
-      wss
+      wss,
+      () => shapeType
     );
-  }, [wss, existingShapes]);
+
+    return cleanup;
+  }, [wss, existingShapes, shapeType]);
 
   useEffect(() => {
     const token = localStorage.getItem("token") as string;
@@ -115,7 +121,25 @@ export default function Canvas() {
     };
   }, [roomId]);
 
-  return <canvas ref={canvasRef} />;
+  return (
+    <div>
+      <canvas ref={canvasRef} />
+      <div className="bg-slate-600 fixed top-5 right-44 left-44 shadow rounded-md flex justify-around">
+        <div
+          className={`text-2xl cursor-pointer p-1 ${shapeType === "Rect" ? "bg-blue-500" : ""}`}
+          onClick={() => setShapeType("Rect")}
+        >
+          Rect
+        </div>
+        <div
+          className={`text-2xl cursor-pointer p-1 ${shapeType === "Circle" ? "bg-blue-500" : ""}`}
+          onClick={() => setShapeType("Circle")}
+        >
+          Circle
+        </div>
+      </div>
+    </div>
+  );
 }
 
 function InitDraw(
@@ -124,52 +148,71 @@ function InitDraw(
   context: CanvasRenderingContext2D,
   getExistingShapes: () => Shape[],
   setExistingShapes: Dispatch<SetStateAction<Shape[]>>,
-  wss: WebSocket
+  wss: WebSocket,
+  getShapeType: () => ShapeType
 ) {
-  if (!canvas || !context) return;
+  if (!canvas || !context) return () => {};
 
   let initialX = 0;
   let finalX = 0;
   let initialY = 0;
   let finalY = 0;
   let isClicked = false;
+  let currentShapeType: ShapeType;
 
-  clearCanvas(getExistingShapes(), canvas, context);
-
-  canvas.addEventListener("mousedown", (e) => {
+  const handleMouseDown = (e: MouseEvent) => {
     isClicked = true;
     initialX = e.clientX;
     initialY = e.clientY;
-  });
+    currentShapeType = getShapeType(); // Capture the shape type at mousedown
+  };
 
-  canvas.addEventListener("mouseup", async (e) => {
+  const handleMouseUp = async (e: MouseEvent) => {
     if (!isClicked) return;
 
     isClicked = false;
     finalX = e.clientX;
     finalY = e.clientY;
 
-    const newShape: Shape = {
-      type: "Rect",
-      x: Math.min(initialX, finalX),
-      y: Math.min(initialY, finalY),
-      width: Math.abs(finalX - initialX),
-      height: Math.abs(finalY - initialY),
-    };
+    if (currentShapeType === "Rect") {
+      const newShape: Shape = {
+        type: "Rect",
+        x: Math.min(initialX, finalX),
+        y: Math.min(initialY, finalY),
+        width: Math.abs(finalX - initialX),
+        height: Math.abs(finalY - initialY),
+      };
+      if (newShape.width > 0 && newShape.height > 0) {
+        setExistingShapes((prevShapes) => {
+          const isDuplicate = prevShapes.some(
+            (shape) => JSON.stringify(shape) === JSON.stringify(newShape)
+          );
+          return isDuplicate ? prevShapes : [...prevShapes, newShape];
+        });
 
-    if (newShape.width > 0 && newShape.height > 0) {
-      setExistingShapes((prevShapes) => {
-        const isDuplicate = prevShapes.some(
-          (shape) => JSON.stringify(shape) === JSON.stringify(newShape)
-        );
-        return isDuplicate ? prevShapes : [...prevShapes, newShape];
-      });
+        await chat(roomId, JSON.stringify(newShape), wss);
+      }
+    } else if (currentShapeType === "Circle") {
+      const newShape: Shape = {
+        type: "Circle",
+        centreX: initialX,
+        centreY: initialY,
+        radius: Math.abs(finalX - initialX),
+      };
+      if (newShape.radius > 0) {
+        setExistingShapes((prevShapes) => {
+          const isDuplicate = prevShapes.some(
+            (shape) => JSON.stringify(shape) === JSON.stringify(newShape)
+          );
+          return isDuplicate ? prevShapes : [...prevShapes, newShape];
+        });
 
-      await chat(roomId, JSON.stringify(newShape), wss);
+        await chat(roomId, JSON.stringify(newShape), wss);
+      }
     }
-  });
+  };
 
-  canvas.addEventListener("mousemove", (e) => {
+  const handleMouseMove = (e: MouseEvent) => {
     if (!isClicked) return;
 
     const currentShapes = getExistingShapes();
@@ -177,16 +220,34 @@ function InitDraw(
     clearCanvas(currentShapes, canvas, context);
 
     context.strokeStyle = "rgba(255, 255, 255, 0.7)";
-    const currentWidth = e.clientX - initialX;
-    const currentHeight = e.clientY - initialY;
 
-    context.strokeRect(
-      Math.min(initialX, e.clientX),
-      Math.min(initialY, e.clientY),
-      Math.abs(currentWidth),
-      Math.abs(currentHeight)
-    );
-  });
+    if (currentShapeType === "Rect") {
+      const currentWidth = e.clientX - initialX;
+      const currentHeight = e.clientY - initialY;
+      context.strokeRect(
+        Math.min(initialX, e.clientX),
+        Math.min(initialY, e.clientY),
+        Math.abs(currentWidth),
+        Math.abs(currentHeight)
+      );
+    } else if (currentShapeType === "Circle") {
+      const radius = Math.abs(e.clientX - initialX);
+      context.beginPath();
+      context.arc(initialX, initialY, radius, 0, 2 * Math.PI);
+      context.stroke();
+    }
+  };
+
+  canvas.addEventListener("mousedown", handleMouseDown);
+  canvas.addEventListener("mouseup", handleMouseUp);
+  canvas.addEventListener("mousemove", handleMouseMove);
+
+  // Return a cleanup function to remove event listeners
+  return () => {
+    canvas.removeEventListener("mousedown", handleMouseDown);
+    canvas.removeEventListener("mouseup", handleMouseUp);
+    canvas.removeEventListener("mousemove", handleMouseMove);
+  };
 }
 
 function clearCanvas(
@@ -202,6 +263,11 @@ function clearCanvas(
     if (shape.type === "Rect") {
       context.strokeStyle = "white";
       context.strokeRect(shape.x, shape.y, shape.width, shape.height);
+    } else if (shape.type === "Circle") {
+      context.strokeStyle = "white";
+      context.beginPath();
+      context.arc(shape.centreX, shape.centreY, shape.radius, 0, 2 * Math.PI);
+      context.stroke();
     }
   });
 }

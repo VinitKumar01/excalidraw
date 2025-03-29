@@ -122,7 +122,7 @@ export default function Canvas() {
   }, [roomId]);
 
   return (
-    <div>
+    <div className="h-full overflow-hidden">
       <canvas ref={canvasRef} />
       <div className="bg-slate-600 fixed top-5 right-44 left-44 shadow rounded-md flex justify-around">
         <div
@@ -195,9 +195,9 @@ function InitDraw(
     } else if (currentShapeType === "Circle") {
       const newShape: Shape = {
         type: "Circle",
-        centreX: initialX,
-        centreY: initialY,
-        radius: Math.abs(finalX - initialX),
+        centreX: initialX + (finalX - initialX) / 2,
+        centreY: initialY + (finalY - initialY) / 2,
+        radius: Math.abs(finalX - initialX) / 2,
       };
       if (newShape.radius > 0) {
         setExistingShapes((prevShapes) => {
@@ -231,9 +231,11 @@ function InitDraw(
         Math.abs(currentHeight)
       );
     } else if (currentShapeType === "Circle") {
-      const radius = Math.abs(e.clientX - initialX);
+      const radius = Math.abs(e.clientX - initialX) / 2;
+      const centerX = initialX + (e.clientX - initialX) / 2;
+      const centerY = initialY + (e.clientY - initialY) / 2;
       context.beginPath();
-      context.arc(initialX, initialY, radius, 0, 2 * Math.PI);
+      context.arc(centerX, centerY, radius, 0, 2 * Math.PI);
       context.stroke();
     }
   };

@@ -168,7 +168,6 @@ UserRouter.get("/chats/:roomId", async (req: Request, res: Response) => {
       orderBy: {
         id: "desc",
       },
-      take: 50,
       select: {
         message: true,
       },

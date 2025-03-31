@@ -11,9 +11,10 @@ export type Shape =
       initialY: number;
       finalX: number;
       finalY: number;
-    };
+    }
+  | { type: "Pencil"; points: { x: number; y: number }[] };
 
-export type ShapeType = "Rect" | "Circle" | "Line";
+export type ShapeType = "Rect" | "Circle" | "Line" | "Pencil";
 
 export default function InitDraw(
   canvas: HTMLCanvasElement,
@@ -33,11 +34,64 @@ export default function InitDraw(
   let isClicked = false;
   let currentShapeType: ShapeType;
 
+  let currentPoints: { x: number; y: number }[] = [];
+
   const handleMouseDown = (e: MouseEvent) => {
     isClicked = true;
     initialX = e.clientX;
     initialY = e.clientY;
-    currentShapeType = getShapeType(); // Capture the shape type at mousedown
+    currentShapeType = getShapeType();
+    if (currentShapeType === "Pencil") {
+      currentPoints = [{ x: e.clientX, y: e.clientY }];
+    }
+  };
+
+  const handleMouseMove = (e: MouseEvent) => {
+    if (!isClicked) return;
+
+    const currentShapes = getExistingShapes();
+
+    clearCanvas(currentShapes, canvas, context);
+
+    context.strokeStyle = "rgba(255, 255, 255, 0.7)";
+
+    if (currentShapeType === "Rect") {
+      const currentWidth = e.clientX - initialX;
+      const currentHeight = e.clientY - initialY;
+      context.strokeRect(
+        Math.min(initialX, e.clientX),
+        Math.min(initialY, e.clientY),
+        Math.abs(currentWidth),
+        Math.abs(currentHeight)
+      );
+    } else if (currentShapeType === "Circle") {
+      const radius = Math.abs(e.clientX - initialX) / 2;
+      const centerX = initialX + (e.clientX - initialX) / 2;
+      const centerY = initialY + (e.clientY - initialY) / 2;
+      context.beginPath();
+      context.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+      context.stroke();
+    } else if (currentShapeType === "Line") {
+      context.beginPath();
+      context.moveTo(initialX, initialY);
+      context.lineTo(e.clientX, e.clientY);
+      context.stroke();
+    } else if (currentShapeType === "Pencil") {
+      currentPoints.push({ x: e.clientX, y: e.clientY });
+
+      context.beginPath();
+      context.moveTo(
+        currentPoints[0]?.x as number,
+        currentPoints[0]?.y as number
+      );
+      for (let i = 1; i < currentPoints.length; i++) {
+        context.lineTo(
+          currentPoints[i]?.x as number,
+          currentPoints[i]?.y as number
+        );
+      }
+      context.stroke();
+    }
   };
 
   const handleMouseUp = async (e: MouseEvent) => {
@@ -103,39 +157,24 @@ export default function InitDraw(
 
         await chat(roomId, JSON.stringify(newShape), wss);
       }
-    }
-  };
+    } else if (currentShapeType === "Pencil") {
+      if (currentPoints.length >= 2) {
+        const newShape: Shape = {
+          type: "Pencil",
+          points: [...currentPoints],
+        };
 
-  const handleMouseMove = (e: MouseEvent) => {
-    if (!isClicked) return;
+        setExistingShapes((prevShapes) => {
+          const isDuplicate = prevShapes.some(
+            (shape) => JSON.stringify(shape) === JSON.stringify(newShape)
+          );
+          return isDuplicate ? prevShapes : [...prevShapes, newShape];
+        });
 
-    const currentShapes = getExistingShapes();
+        await chat(roomId, JSON.stringify(newShape), wss);
+      }
 
-    clearCanvas(currentShapes, canvas, context);
-
-    context.strokeStyle = "rgba(255, 255, 255, 0.7)";
-
-    if (currentShapeType === "Rect") {
-      const currentWidth = e.clientX - initialX;
-      const currentHeight = e.clientY - initialY;
-      context.strokeRect(
-        Math.min(initialX, e.clientX),
-        Math.min(initialY, e.clientY),
-        Math.abs(currentWidth),
-        Math.abs(currentHeight)
-      );
-    } else if (currentShapeType === "Circle") {
-      const radius = Math.abs(e.clientX - initialX) / 2;
-      const centerX = initialX + (e.clientX - initialX) / 2;
-      const centerY = initialY + (e.clientY - initialY) / 2;
-      context.beginPath();
-      context.arc(centerX, centerY, radius, 0, 2 * Math.PI);
-      context.stroke();
-    } else if (currentShapeType === "Line") {
-      context.beginPath();
-      context.moveTo(initialX, initialY);
-      context.lineTo(e.clientX, e.clientY);
-      context.stroke();
+      currentPoints = [];
     }
   };
 
@@ -143,7 +182,6 @@ export default function InitDraw(
   canvas.addEventListener("mouseup", handleMouseUp);
   canvas.addEventListener("mousemove", handleMouseMove);
 
-  // Return a cleanup function to remove event listeners
   return () => {
     canvas.removeEventListener("mousedown", handleMouseDown);
     canvas.removeEventListener("mouseup", handleMouseUp);

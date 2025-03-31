@@ -22,6 +22,16 @@ export default function clearCanvas(
       context.moveTo(shape.initialX, shape.initialY);
       context.lineTo(shape.finalX, shape.finalY);
       context.stroke();
+    } else if (shape.type === "Pencil" && Array.isArray(shape.points)) {
+      const points = shape.points;
+      if (points.length < 2) return;
+
+      context.beginPath();
+      context.moveTo(points[0]?.x as number, points[0]?.y as number);
+      for (let i = 1; i < points.length; i++) {
+        context.lineTo(points[i]?.x as number, points[i]?.y as number);
+      }
+      context.stroke();
     }
   });
 }

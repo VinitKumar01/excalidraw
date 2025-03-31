@@ -141,6 +141,12 @@ export default function Canvas() {
         >
           Line
         </div>
+        <div
+          className={`text-2xl cursor-pointer p-1 ${shapeType === "Pencil" ? "bg-blue-500" : ""}`}
+          onClick={() => setShapeType("Pencil")}
+        >
+          Pencil
+        </div>
       </div>
     </div>
   );

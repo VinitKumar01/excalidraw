@@ -12,9 +12,10 @@ export type Shape =
       finalX: number;
       finalY: number;
     }
-  | { type: "Pencil"; points: { x: number; y: number }[] };
+  | { type: "Pencil"; points: { x: number; y: number }[] }
+  | { type: "Text"; text: string; x: number; y: number };
 
-export type ShapeType = "Rect" | "Circle" | "Line" | "Pencil";
+export type ShapeType = "Rect" | "Circle" | "Line" | "Pencil" | "Text";
 
 export default function InitDraw(
   canvas: HTMLCanvasElement,
@@ -33,16 +34,82 @@ export default function InitDraw(
   let finalY = 0;
   let isClicked = false;
   let currentShapeType: ShapeType;
+  let isWriting = false;
+  let existingText = "";
+  let textX = 0;
+  let textY = 0;
+  let isShiftDown = false;
 
   let currentPoints: { x: number; y: number }[] = [];
 
-  const handleMouseDown = (e: MouseEvent) => {
+  const handleKeyDown = (e: KeyboardEvent) => {
+    if (!isWriting || !(currentShapeType === "Text")) {
+      return;
+    }
+    if (e.key === "Shift") {
+      isShiftDown = true;
+      return;
+    } else if (
+      e.key === "Control" ||
+      e.key === "Alt" ||
+      e.key === "Enter" ||
+      e.key === "Tab"
+    ) {
+      return;
+    } else if (e.key === "CapsLock") {
+      isShiftDown = !isShiftDown;
+      return;
+    }
+    context.font = "48px serif";
+    if (e.key === "Backspace") {
+      existingText = existingText.slice(0, -1);
+    } else {
+      existingText += isShiftDown ? e.key.toUpperCase() : e.key;
+    }
+    clearCanvas(getExistingShapes(), canvas, context);
+    context.fillStyle = "white";
+    context.fillText(existingText, textX, textY);
+  };
+
+  const handleKeyUp = (e: KeyboardEvent) => {
+    if (e.key === "Shift") {
+      isShiftDown = false;
+      return;
+    }
+  };
+
+  const handleMouseDown = async (e: MouseEvent) => {
     isClicked = true;
     initialX = e.clientX;
     initialY = e.clientY;
     currentShapeType = getShapeType();
     if (currentShapeType === "Pencil") {
       currentPoints = [{ x: e.clientX, y: e.clientY }];
+    } else if (currentShapeType === "Text") {
+      if (isWriting) {
+        const newShape: Shape = {
+          type: "Text",
+          text: existingText,
+          x: textX,
+          y: textY,
+        };
+        if (newShape.text.length > 0) {
+          setExistingShapes((prevShapes) => {
+            const isDuplicate = prevShapes.some(
+              (shape) => JSON.stringify(shape) === JSON.stringify(newShape)
+            );
+            return isDuplicate ? prevShapes : [...prevShapes, newShape];
+          });
+
+          await chat(roomId, JSON.stringify(newShape), wss);
+        }
+        isWriting = false;
+        existingText = "";
+      } else {
+        isWriting = true;
+        textX = e.clientX;
+        textY = e.clientY;
+      }
     }
   };
 
@@ -181,10 +248,14 @@ export default function InitDraw(
   canvas.addEventListener("mousedown", handleMouseDown);
   canvas.addEventListener("mouseup", handleMouseUp);
   canvas.addEventListener("mousemove", handleMouseMove);
+  window.addEventListener("keydown", handleKeyDown);
+  window.addEventListener("keyup", handleKeyUp);
 
   return () => {
     canvas.removeEventListener("mousedown", handleMouseDown);
     canvas.removeEventListener("mouseup", handleMouseUp);
     canvas.removeEventListener("mousemove", handleMouseMove);
+    window.removeEventListener("keydown", handleKeyDown);
+    window.removeEventListener("keyup", handleKeyUp);
   };
 }

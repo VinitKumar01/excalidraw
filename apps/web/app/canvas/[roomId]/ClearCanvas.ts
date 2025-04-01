@@ -32,6 +32,10 @@ export default function clearCanvas(
         context.lineTo(points[i]?.x as number, points[i]?.y as number);
       }
       context.stroke();
+    } else if (shape.type === "Text") {
+      context.font = "48px serif";
+      context.fillStyle = "white";
+      context.fillText(shape.text, shape.x, shape.y);
     }
   });
 }

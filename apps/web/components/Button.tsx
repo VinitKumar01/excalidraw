@@ -4,11 +4,18 @@ interface ButtonProps {
   className?: string;
   value: string;
   formAction?: (formData: FormData) => void;
+  onClick?: () => void;
 }
 
-export const Button = ({ className, value, formAction }: ButtonProps) => {
+export const Button = ({
+  className,
+  value,
+  formAction,
+  onClick,
+}: ButtonProps) => {
   return (
     <button
+      onClick={onClick}
       formAction={formAction}
       className={
         className ||

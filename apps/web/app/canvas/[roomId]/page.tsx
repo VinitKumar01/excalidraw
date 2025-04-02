@@ -7,6 +7,7 @@ import leaveRoom from "./LeaveRoom";
 import joinRoom from "./JoinRoom";
 import InitDraw, { Shape, ShapeType } from "./InitDraw";
 import clearCanvas from "./ClearCanvas";
+import { Button } from "../../../components/Button";
 
 export default function Canvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -122,37 +123,49 @@ export default function Canvas() {
   return (
     <div className="h-full overflow-hidden">
       <canvas ref={canvasRef} />
-      <div className="bg-slate-600 fixed top-5 right-44 left-44 shadow rounded-md flex justify-around">
+      <div className="bg-slate-400 fixed top-5 right-44 left-44 shadow rounded-md flex justify-around">
         <div
-          className={`text-2xl rounded-md m-1 cursor-pointer p-1 ${shapeType === "Rect" ? "bg-blue-500" : ""}`}
+          className={`text-2xl rounded-md m-1 cursor-pointer p-1 ${shapeType === "Rect" ? "bg-purple-500" : ""}`}
           onClick={() => setShapeType("Rect")}
         >
           Rect
         </div>
         <div
-          className={`text-2xl rounded-md m-1 cursor-pointer p-1 ${shapeType === "Circle" ? "bg-blue-500" : ""}`}
+          className={`text-2xl rounded-md m-1 cursor-pointer p-1 ${shapeType === "Circle" ? "bg-purple-500" : ""}`}
           onClick={() => setShapeType("Circle")}
         >
           Circle
         </div>
         <div
-          className={`text-2xl rounded-md m-1 cursor-pointer p-1 ${shapeType === "Line" ? "bg-blue-500" : ""}`}
+          className={`text-2xl rounded-md m-1 cursor-pointer p-1 ${shapeType === "Line" ? "bg-purple-500" : ""}`}
           onClick={() => setShapeType("Line")}
         >
           Line
         </div>
         <div
-          className={`text-2xl rounded-md m-1 cursor-pointer p-1 ${shapeType === "Pencil" ? "bg-blue-500" : ""}`}
+          className={`text-2xl rounded-md m-1 cursor-pointer p-1 ${shapeType === "Pencil" ? "bg-purple-500" : ""}`}
           onClick={() => setShapeType("Pencil")}
         >
           Pencil
         </div>
         <div
-          className={`text-2xl rounded-md m-1 cursor-pointer p-1 ${shapeType === "Text" ? "bg-blue-500" : ""}`}
+          className={`text-2xl rounded-md m-1 cursor-pointer p-1 ${shapeType === "Text" ? "bg-purple-500" : ""}`}
           onClick={() => setShapeType("Text")}
         >
           Text
         </div>
+      </div>
+      <div className="fixed bottom-5 right-10">
+        <Button
+          onClick={() => {
+            const canvas = canvasRef.current;
+            const img = canvas
+              ?.toDataURL("image/png")
+              .replace("image/png", "image/octet-stream");
+            window.location.href = img as string;
+          }}
+          value="Download"
+        />
       </div>
     </div>
   );

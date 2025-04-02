@@ -124,31 +124,31 @@ export default function Canvas() {
       <canvas ref={canvasRef} />
       <div className="bg-slate-600 fixed top-5 right-44 left-44 shadow rounded-md flex justify-around">
         <div
-          className={`text-2xl cursor-pointer p-1 ${shapeType === "Rect" ? "bg-blue-500" : ""}`}
+          className={`text-2xl rounded-md m-1 cursor-pointer p-1 ${shapeType === "Rect" ? "bg-blue-500" : ""}`}
           onClick={() => setShapeType("Rect")}
         >
           Rect
         </div>
         <div
-          className={`text-2xl cursor-pointer p-1 ${shapeType === "Circle" ? "bg-blue-500" : ""}`}
+          className={`text-2xl rounded-md m-1 cursor-pointer p-1 ${shapeType === "Circle" ? "bg-blue-500" : ""}`}
           onClick={() => setShapeType("Circle")}
         >
           Circle
         </div>
         <div
-          className={`text-2xl cursor-pointer p-1 ${shapeType === "Line" ? "bg-blue-500" : ""}`}
+          className={`text-2xl rounded-md m-1 cursor-pointer p-1 ${shapeType === "Line" ? "bg-blue-500" : ""}`}
           onClick={() => setShapeType("Line")}
         >
           Line
         </div>
         <div
-          className={`text-2xl cursor-pointer p-1 ${shapeType === "Pencil" ? "bg-blue-500" : ""}`}
+          className={`text-2xl rounded-md m-1 cursor-pointer p-1 ${shapeType === "Pencil" ? "bg-blue-500" : ""}`}
           onClick={() => setShapeType("Pencil")}
         >
           Pencil
         </div>
         <div
-          className={`text-2xl cursor-pointer p-1 ${shapeType === "Text" ? "bg-blue-500" : ""}`}
+          className={`text-2xl rounded-md m-1 cursor-pointer p-1 ${shapeType === "Text" ? "bg-blue-500" : ""}`}
           onClick={() => setShapeType("Text")}
         >
           Text

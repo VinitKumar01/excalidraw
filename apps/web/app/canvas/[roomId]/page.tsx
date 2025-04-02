@@ -164,7 +164,7 @@ export default function Canvas() {
               .replace("image/png", "image/octet-stream");
             window.location.href = img as string;
           }}
-          value="Download"
+          value="Save PNG"
         />
       </div>
     </div>

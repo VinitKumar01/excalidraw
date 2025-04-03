@@ -8,6 +8,13 @@ import joinRoom from "./JoinRoom";
 import InitDraw, { Shape, ShapeType } from "./InitDraw";
 import clearCanvas from "./ClearCanvas";
 import { Button } from "../../../components/Button";
+import {
+  CircleIcon,
+  LineIcon,
+  PenIcon,
+  RectangleIcon,
+  TextIcon,
+} from "../../icons";
 
 export default function Canvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -123,36 +130,36 @@ export default function Canvas() {
   return (
     <div className="h-full overflow-hidden">
       <canvas ref={canvasRef} />
-      <div className="bg-slate-400 fixed top-5 right-44 left-44 shadow rounded-md flex justify-around">
+      <div className="bg-slate-400 fixed top-5 left-5 bottom-5 md:top-5 md:right-44 md:left-44 md:bottom-auto shadow rounded-md flex md:flex-row flex-col justify-between">
         <div
-          className={`text-2xl rounded-md m-1 cursor-pointer p-1 ${shapeType === "Rect" ? "bg-purple-500" : ""}`}
+          className={`items-center flex flex-col justify-center rounded-md m-1 cursor-pointer p-1 ${shapeType === "Rect" ? "bg-purple-500" : ""}`}
           onClick={() => setShapeType("Rect")}
         >
-          Rect
+          <RectangleIcon />
         </div>
         <div
-          className={`text-2xl rounded-md m-1 cursor-pointer p-1 ${shapeType === "Circle" ? "bg-purple-500" : ""}`}
+          className={`items-center flex flex-col justify-center rounded-md m-1 cursor-pointer p-1 ${shapeType === "Circle" ? "bg-purple-500" : ""}`}
           onClick={() => setShapeType("Circle")}
         >
-          Circle
+          <CircleIcon />
         </div>
         <div
-          className={`text-2xl rounded-md m-1 cursor-pointer p-1 ${shapeType === "Line" ? "bg-purple-500" : ""}`}
+          className={`items-center flex flex-col justify-center rounded-md m-1 cursor-pointer p-1 ${shapeType === "Line" ? "bg-purple-500" : ""}`}
           onClick={() => setShapeType("Line")}
         >
-          Line
+          <LineIcon />
         </div>
         <div
-          className={`text-2xl rounded-md m-1 cursor-pointer p-1 ${shapeType === "Pencil" ? "bg-purple-500" : ""}`}
+          className={`items-center flex flex-col justify-center rounded-md m-1 cursor-pointer p-1 ${shapeType === "Pencil" ? "bg-purple-500" : ""}`}
           onClick={() => setShapeType("Pencil")}
         >
-          Pencil
+          <PenIcon />
         </div>
         <div
-          className={`text-2xl rounded-md m-1 cursor-pointer p-1 ${shapeType === "Text" ? "bg-purple-500" : ""}`}
+          className={`items-center flex flex-col justify-center rounded-md m-1 cursor-pointer p-1 ${shapeType === "Text" ? "bg-purple-500" : ""}`}
           onClick={() => setShapeType("Text")}
         >
-          Text
+          <TextIcon />
         </div>
       </div>
       <div className="fixed bottom-5 right-10">
